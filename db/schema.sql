@@ -37,6 +37,6 @@ on delete cascade
 manager_id integer 
 foreign key(manager_id)
 references employee(id)
-on delete  set null cascade
+on delete set null
 
 );
