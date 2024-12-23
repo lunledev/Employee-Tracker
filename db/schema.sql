@@ -18,6 +18,9 @@ id serial primary key,
 title varchar(30) unique not null
 salary decimal not null
 department_id integer not null
+foreign key(department_id)
+references department(id)
+ on delete cascade
 );
 
 
@@ -26,8 +29,14 @@ create table employee(
 id serial primary key,
 first_name varchar(30) not null,
 last_name varchar(30) not null,
-role_id integer not null,
+role_id integer not null
+foreign key(role_id) 
+references role(id)
+on delete cascade
+,
 manager_id integer 
-
+foreign key(manager_id)
+references employee(id)
+on delete  set null cascade
 
 );
