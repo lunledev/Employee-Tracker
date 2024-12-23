@@ -14,4 +14,14 @@ insert into role (title, salary, department_id) values ('Legal Team Lead', 25000
 insert into role (title, salary, department_id) values ('Lawyer', 190000, 4);
 
 
+insert into employee (first_name, last_name, role_id, manager_id) values ('John', 'Doe', 1, NULL);  
+insert into employee (first_name, last_name, role_id, manager_id) values ('Mike', 'Chan', 2, 1);
+insert into employee (first_name, last_name, role_id, manager_id) values ('Ashley', 'Rodriguez', 3, NULL);
+insert into employee (first_name, last_name, role_id, manager_id) values ('Kevin', 'Tupik', 4, 3);
+insert into employee (first_name, last_name, role_id, manager_id) values ('Kunal', 'Singh', 5, NULL);
+insert into employee (first_name, last_name, role_id, manager_id) values ('Malia', 'Brown', 6, 5);
+insert into employee (first_name, last_name, role_id, manager_id) values ('Sarah', 'Lourd', 7, NULL);
+insert into employee (first_name, last_name, role_id, manager_id) values ('Tom', 'Allen', 8, 7);
+
+
 
