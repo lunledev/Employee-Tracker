@@ -35,21 +35,53 @@ function init() {
 
     const menuModule = inquirer.createPromptModule();
 
-    menuModule(prompt).then((answers)=> {
+    menuModule(prompt).then((answers) => {
 
-        if(answers.action ==='View All Employees')
-        {
-            pool.query(`SELECT * `);
+        if (answers.action === 'View All Departments') {
+            pool.query('SELECT * FROM department', (err, result) => {
+                if (err) {
+                    console.log(err);
+                }
+                else if (result) {
+                    const header = Object.keys(result.rows[0]).join('\t');
 
-           //console.log();
-           //console.table();
+                    console.table(`\n${header}\n--\t-----------`);
+
+                    for (let i = 0; i < result.rows.length; i++) {
+                        const rowdata = Object.values(result.rows[i]);
+                        console.log(rowdata.join('\t'));
+                    }
+
+                    
+                    
+                    
+
+
+                }
+
+
+
+
+
+
+
+            });
+
+            init();
+
+
         }
-        else if(answers.action==='Quit')
-        {
-            pool.end();
+        else if (answers.action === 'Quit') {
+
+
             process.exit();
-            
+
+
         }
+
+
+
+
 
 
 
