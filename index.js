@@ -2,8 +2,9 @@ import { pool, connectToDb } from './connection.js';
 await connectToDb();
 
 import inquirer from 'inquirer';
-
-
+import Table from 'cli-table3'; //for table display to console.
+import {table} from 'console';
+import { styleText } from 'util';
 
 const prompt = [
 
@@ -13,13 +14,13 @@ const prompt = [
         name: 'action',
         message: 'What would you like to do?',
         choices: [
+            'View All Departments',
+            'View All Roles',
             'View All Employees',
+            'Add Department',
+            'Add Role',
             'Add Employee',
             'Update Employee Role',
-            'View All Roles',
-            'Add Role',
-            'View All Departments',
-            'Add Department',
             'Quit',
         ],
 
@@ -30,26 +31,42 @@ const prompt = [
 ];
 
 function displayTable(result){
-    const header = Object.keys(result.rows[0]).join('\t');
+    const header = Object.keys(result.rows[0]);
 
-    console.table(`\n${header}\n--\t-----------`);
+    const table = new Table({ head: header,  style: { head: ['green'], border: ['white'] } } );
+  
+     for (let i = 0; i < result.rows.length; i++) {
+        let rowdata = Object.values(result.rows[i]);
+        table.push(rowdata);
+     }
+    
+    console.log(table.toString());
 
-    for (let i = 0; i < result.rows.length; i++) {
-        const rowdata = Object.values(result.rows[i]);
-        console.log(rowdata.join('\t'));
-    }
-    console.log('\n');
-
+    
 }
 
 function menuActions() {
-    const menuModule = inquirer.createPromptModule();
+    const menuModule = inquirer.createPromptModule(); 
 
 
     menuModule(prompt).then((answers) => {
         //actions
         if (answers.action === 'View All Departments') {
             pool.query('SELECT * FROM department', (err, result) => {
+                if (err) {
+                    console.log(err);
+                }
+                else if (result) {
+                    displayTable(result);
+                    menuActions();
+                }
+
+            });
+
+        }
+        else if (answers.action === 'View All Roles') {
+            pool.query(`SELECT role.id, role.title, department.name AS department, role.salary 
+                FROM role INNER JOIN department ON role.department_id = department.id`, (err, result) => {
                 if (err) {
                     console.log(err);
                 }
@@ -74,7 +91,7 @@ function menuActions() {
 
 
         }
-        if(answers.action !== 'Quit')
+        else
         {
             menuActions();
 
