@@ -76,7 +76,7 @@ function menuActions() {
 
             });
             }
-            else if (answers.action === 'View All Roles') {
+            else if (answers.action === 'View All Employees') {
                 pool.query(`SELECT employee.id, employee.first_name, employee.last_name,role.title, 
                     department.name AS department, role.salary,
                     CONCAT(manager.first_name, ' ',manager.last_name) AS manager 
@@ -93,6 +93,28 @@ function menuActions() {
                     }
                 });
             }
+            else if (answers.action === 'Add Department'){
+                pool.query(``, (err, result) => {
+                if(err) {
+                    console.log(err);
+                }
+                else if(result) {
+                    displayTable(result);
+                    menuActions();
+                }
+            });
+
+            }
+            else if (answers.action === 'Add Role'){
+
+            }
+            else if (answers.action === 'Add Employee'){
+
+            }
+            else if (answers.action === 'Update Employee Role'){
+
+            }
+
             else if (answers.action === 'Quit') {
 
 
