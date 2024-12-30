@@ -3,8 +3,7 @@ await connectToDb();
 
 import inquirer from 'inquirer';
 import Table from 'cli-table3'; //for table display to console.
-import {table} from 'console';
-import { styleText } from 'util';
+
 
 const prompt = [
 
@@ -30,23 +29,23 @@ const prompt = [
 
 ];
 
-function displayTable(result){
+function displayTable(result) {
     const header = Object.keys(result.rows[0]);
 
-    const table = new Table({ head: header,  style: { head: ['green'], border: ['white'] } } );
-  
-     for (let i = 0; i < result.rows.length; i++) {
+    const table = new Table({ head: header, style: { head: ['green'], border: ['white'] } });
+
+    for (let i = 0; i < result.rows.length; i++) {
         let rowdata = Object.values(result.rows[i]);
         table.push(rowdata);
-     }
-    
+    }
+
     console.log(table.toString());
 
-    
+
 }
 
 function menuActions() {
-    const menuModule = inquirer.createPromptModule(); 
+    const menuModule = inquirer.createPromptModule();
 
 
     menuModule(prompt).then((answers) => {
@@ -76,34 +75,43 @@ function menuActions() {
                 }
 
             });
-            
+            }
+            else if (answers.action === 'View All Roles') {
+                pool.query(`SELECT employee.id, employee.first_name, employee.last_name,role.title, 
+                    department.name AS department, role.salary,
+                    CONCAT(manager.first_name, ' ',manager.last_name) AS manager 
+                    FROM employee INNER JOIN ON role.id = employee.role_id
+                    INNER JOIN department ON role.department_id=department.id
+                    LEFT OUTER JOIN employee AS manager on employee.manager_id = manager.id`, (err, result) => {
 
-           
-
-            
-
-
-        }
-        else if (answers.action === 'Quit') {
-
-
-            process.exit();
-
-
-        }
-        else
-        {
-            menuActions();
-
-        }
-
+                    if(err) {
+                        console.log(err);
+                    }
+                    else if(result) {
+                        displayTable(result);
+                        menuActions();
+                    }
+                });
+            }
+            else if (answers.action === 'Quit') {
 
 
+                process.exit();
+
+
+            }
+            else {
+                menuActions();
+
+            }
 
 
 
 
-    });
+
+
+
+        });
 
 }
 
