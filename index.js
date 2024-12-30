@@ -75,65 +75,68 @@ function menuActions() {
                 }
 
             });
-            }
-            else if (answers.action === 'View All Employees') {
-                pool.query(`SELECT employee.id, employee.first_name, employee.last_name,role.title, 
-                    department.name AS department, role.salary,
-                    CONCAT(manager.first_name, ' ',manager.last_name) AS manager 
-                    FROM employee INNER JOIN ON role.id = employee.role_id
-                    INNER JOIN department ON role.department_id=department.id
-                    LEFT OUTER JOIN employee AS manager on employee.manager_id = manager.id`, (err, result) => {
+        }
 
-                    if(err) {
-                        console.log(err);
-                    }
-                    else if(result) {
-                        displayTable(result);
-                        menuActions();
-                    }
-                });
-            }
-            else if (answers.action === 'Add Department'){
-                pool.query(``, (err, result) => {
-                if(err) {
+       
+        else if (answers.action === 'View All Employees') {
+            pool.query(` SELECT employee.id,employee.first_name,employee.last_name, 
+                role.title, department.name AS department, role.salary,
+                CONCAT(manager.first_name,' ',manager.last_name) AS manager
+                FROM employee
+                INNER JOIN role ON role.id =  employee.role_id
+                INNER JOIN department ON role.department_id = department.id
+                LEFT OUTER JOIN employee AS manager ON employee.manager_id = manager.id`, (err, result) => {
+
+                if (err) {
                     console.log(err);
                 }
-                else if(result) {
+                else if (result) {
                     displayTable(result);
                     menuActions();
                 }
             });
+        }
+        // else if (answers.action === 'Add Department'){
+        //    pool.query(``, (err, result) => {
+        //    if(err) {
+        //        console.log(err);
+        //    }
+        //    else if(result) {
+        //        displayTable(result);
+        //        menuActions();
+        //    }
+        //});
 
-            }
-            else if (answers.action === 'Add Role'){
+        //}
+        //else if (answers.action === 'Add Role'){
 
-            }
-            else if (answers.action === 'Add Employee'){
+        // }
+        // else if (answers.action === 'Add Employee'){
 
-            }
-            else if (answers.action === 'Update Employee Role'){
+        // }
+        // else if (answers.action === 'Update Employee Role'){
 
-            }
+        // }
 
-            else if (answers.action === 'Quit') {
-
-
-                process.exit();
-
-
-            }
-            else {
-                menuActions();
-
-            }
-
-
-
+        else if (answers.action === 'Quit') {
 
 
+            process.exit();
 
 
-        });
+        }
+        else {
+            menuActions();
+
+        }
+
+
+
+
+
+
+
+    });
 
 }
 
