@@ -77,7 +77,7 @@ function menuActions() {
             });
         }
 
-       
+
         else if (answers.action === 'View All Employees') {
             pool.query(` SELECT employee.id,employee.first_name,employee.last_name, 
                 role.title, department.name AS department, role.salary,
@@ -96,18 +96,39 @@ function menuActions() {
                 }
             });
         }
-        // else if (answers.action === 'Add Department'){
-        //    pool.query(``, (err, result) => {
-        //    if(err) {
-        //        console.log(err);
-        //    }
-        //    else if(result) {
-        //        displayTable(result);
-        //        menuActions();
-        //    }
-        //});
+        else if (answers.action === 'Add Department') {
 
-        //}
+            const AddDepartmentModule = inquirer.createPromptModule();
+
+            AddDepartmentModule(
+                [
+
+                    {
+
+                        type: 'input',
+                        name: 'department',
+                        message: 'What is the name of the department?',
+
+                    },
+
+
+
+                ]
+
+            ).then((department_name) => {
+
+                pool.query(`INSERT INTO department(name) VALUES($1)`, [department_name.department], (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else if (result) {
+                        console.log(`${result.rowCount} added to department!`);
+                        menuActions();
+                    }
+                });
+
+            });
+        }
         //else if (answers.action === 'Add Role'){
 
         // }
