@@ -102,7 +102,6 @@ function menuActions() {
 
             AddDepartmentModule(
                 [
-
                     {
 
                         type: 'input',
@@ -111,27 +110,99 @@ function menuActions() {
 
                     },
 
-
-
                 ]
 
             ).then((department_name) => {
 
                 pool.query(`INSERT INTO department(name) VALUES($1)`, [department_name.department], (err, result) => {
                     if (err) {
-                        console.log(err);
+
+                        console.log(`${department_name.department} already exists in ${err.table}`);
+                        menuActions();
                     }
                     else if (result) {
                         console.log(`${result.rowCount} added to department!`);
                         menuActions();
+                        
                     }
                 });
 
             });
         }
-        //else if (answers.action === 'Add Role'){
+        else if (answers.action === 'Add Role'){
 
-        // }
+            const AddRoleModule = inquirer.createPromptModule();
+
+           //select name from department table
+           pool.query('SELECT * FROM department', (err, result) => {
+            if (err) {
+                console.log(err);
+            }
+            else if (result) {
+                AddRoleModule(
+                    [
+                        {
+                            type: 'input',
+                            name: 'role_name',
+                            message: 'What is the name of the role?',
+    
+                        },
+    
+                        {
+                            type: 'input',
+                            name: 'role_salary',
+                            message: 'What is the salary of the role?',
+    
+                        },
+    
+                        {
+    
+                            type: 'list',
+                            name: 'role_department',
+                            message: 'Which department does the role belong to?',
+                            choices: result.rows,
+    
+                            
+                        },
+                          
+                     
+                    
+                             
+                    
+                    
+                    ]
+                    
+    
+                ).then((role) =>{
+    
+                    //pool.query(`INSERT INTO role(name) VALUES($1)`, [department_name.department], (err, result) => {
+                       // if (err) {
+                     //       console.log(err);
+                      //  }
+                      //  else if (result) {
+                      //      console.log(`${result.rowCount} added to department!`);
+                      //      menuActions();
+                       // }
+                    //});
+    
+                });
+               
+                
+                
+
+
+
+            }
+
+        });
+
+
+         
+
+
+
+
+        }
         // else if (answers.action === 'Add Employee'){
 
         // }
