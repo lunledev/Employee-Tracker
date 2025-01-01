@@ -51,6 +51,7 @@ function menuActions() {
     menuModule(prompt).then((answers) => {
         //actions
         if (answers.action === 'View All Departments') {
+            
             pool.query('SELECT * FROM department', (err, result) => {
                 if (err) {
                     console.log(err);
@@ -61,6 +62,7 @@ function menuActions() {
                 }
 
             });
+            
 
         }
         else if (answers.action === 'View All Roles') {
@@ -121,7 +123,7 @@ function menuActions() {
                         menuActions();
                     }
                     else if (result) {
-                        console.log(`${result.rowCount} added to department!`);
+                        console.log(`${result.rowCount} added to department database!`);
                         menuActions();
                         
                     }
@@ -165,44 +167,43 @@ function menuActions() {
                             
                         },
                           
-                     
-                    
-                             
-                    
-                    
                     ]
                     
     
                 ).then((role) =>{
+
+
+                    pool.query(`SELECT id FROM department where name = ($1)`, [role.role_department], (err, resultID) => {
+
+
+                        if (err) {
+                            console.log(err);
+                        }
+                        else if (resultID) {
+                                const department = resultID.rows[0].id;
+
+                           pool.query(`INSERT INTO role(title,salary,department_id) VALUES($1,$2,$3)`, [role.role_name,role.role_salary,department], (err, result) => {
+                              if (err) {
+                                    console.log(`${role.role_department} already exists in ${err.table}`);
+                                    menuActions();
+                                }
+                                else if (result) {
+                                    console.log(`${result.rowCount} added to role database!`);
+                                    menuActions();
+                              }
+                            });
+                        }
+                    });
+
+                }); //end of AddRoleModule    
+
+            } //end of else if (result)
+
+        }); //end of pool.query outer
+        
+        } //end of else if (answers.action === 'Add Role')
+
     
-                    //pool.query(`INSERT INTO role(name) VALUES($1)`, [department_name.department], (err, result) => {
-                       // if (err) {
-                     //       console.log(err);
-                      //  }
-                      //  else if (result) {
-                      //      console.log(`${result.rowCount} added to department!`);
-                      //      menuActions();
-                       // }
-                    //});
-    
-                });
-               
-                
-                
-
-
-
-            }
-
-        });
-
-
-         
-
-
-
-
-        }
         // else if (answers.action === 'Add Employee'){
 
         // }
@@ -213,6 +214,7 @@ function menuActions() {
         else if (answers.action === 'Quit') {
 
 
+            pool.end();
             process.exit();
 
 
