@@ -208,70 +208,132 @@ function menuActions() {
             const AddEmployeeModule = inquirer.createPromptModule();
 
 
-            pool.query('SELECT ro',[],(err, result) =>{
+            Promise.all([pool.query('SELECT title FROM role'),
+                pool.query('SELECT CONCAT(first_name,\' \',last_name) AS manager FROM employee')
+                
+            ]).then(([query1, query2]) => {
 
-                if (err) {
-                    console.log(err);
-                }
-                else if (result) {
+                const employee_role = query1.rows.map((role) => role.title);
+                const employee_manager = query2.rows.map((manager) => manager.manager);
+                employee_manager.push('none');
+                   
 
+               
+
+                console.log(employee_manager);
 
                     AddEmployeeModule([
 
-                        {
+                    {
                             type: 'input',
-                            name: 'employee_firstname',
-                            message: `What is the employee's first name?`,
+                           name: 'employee_firstname',
+                           message: `What is the employee's first name?`,
         
         
-                        },
-                        {
-                            type: 'input',
-                            name: 'employee_lastname',
-                            message: `What is the employee's last name?`,
+                       },
+                       {
+                           type: 'input',
+                           name: 'employee_lastname',
+                           message: `What is the employee's last name?`,
         
         
-                        },
+                       },
         
-                        {
+                       {
+                           type: 'list',
+                         name: 'employee_role',
+                           message: `What is the employee's role?`,
+                           choices: employee_role,
+        
+        
+                    },
+        
+                       {
                             type: 'list',
-                            name: 'employee_role',
-                            message: `What is the employee's role?`,
-                            choice: [],
-        
-        
-                        },
-        
-                        {
-                            type: 'list',
-                            name: 'employee_manager',
+                          name: 'employee_manager',
                             message: `Who is the employee's manager?`,
-                            choice: ['none',],
+                           // choices: employee_manager.map((manager) => manager === null ? 'null' : manager),    
+                           choices: employee_manager,    
         
         
-                        },
+                      },
         
         
         
                     ]
                     ).then((employee) => {
-        
-        
-        
+                        
+                     
+
+
+
+                    pool.query(`SELECT id FROM role where title = ($1)`, [employee.employee_role], (err, resultID) => {
+
+                        if (err) {
+                            console.log(err);
+                        }
+                        else if (resultID) {
+                            const role = resultID.rows[0].id;
+
+
+                            if (employee.employee_manager === 'none'){
+                                employee.employee_manager = null;
+                            
+                            pool.query(`INSERT INTO employee(first_name,last_name,role_id,manager_id) VALUES($1,$2,$3,$4)`, [employee.employee_firstname, employee.employee_lastname, role, employee.employee_manager], (err, result) => {
+                                if (err) {
+                                    console.log(`${employee.employee_firstname} ${employee.employee_lastname} already exists in ${err.table}`);
+                                    menuActions();
+                                }
+                                else if (result) {
+                                    console.log(`${result.rowCount} added to employee database!`);
+                                    menuActions();
+                                }
+                            });
+                        }
+                        else {
+
+
+
+
+
+
+                            pool.query(`SELECT id FROM employee where CONCAT(first_name,' ',last_name) = ($1)`, [employee.employee_manager], (err, resultID) => {
+
+                                if (err) {
+                                    console.log(console.log(`${employee.employee_firstname} ${employee.employee_lastname} already exists in ${err.table}`));
+                                }
+                                else if (resultID) {
+                                    const manager = resultID.rows[0].id;
+
+                                  
+                            
+
+                                    pool.query(`INSERT INTO employee(first_name,last_name,role_id,manager_id) VALUES($1,$2,$3,$4)`, [employee.employee_firstname, employee.employee_lastname, role, manager], (err, result) => {
+                                        if (err) {
+                                            console.log(`${employee.employee_firstname} ${employee.employee_lastname} already exists in ${err.table}`);
+                                            menuActions();
+                                        }
+                                        else if (result) {
+                                            console.log(`${result.rowCount} added to employee database!`);
+                                            menuActions();
+                                        }
+                                    });
+                                }
+                           
+                            });
+                        } 
+                    } //end of else if (resultID)  
+                        
+                        
                     });//end of AddEmployeeModule
 
+                   
 
-
-            }
-
-
-          
-
+                });//end of Promise.all
+            });//end of AddEmployeeModule
 
 
 
-
-        });
 
 
 
