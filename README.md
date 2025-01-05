@@ -8,7 +8,7 @@ gin a my hypothetical company that results in the organizing and planning of my 
 
 ## Installation
 
-npm i used to install packages needed, Node.js, and PostgreSQL, needs to be installed to run application.
+npm i used to install packages needed, Node.js, aneeds to be installed to run application.
 
 
 ## Usage
