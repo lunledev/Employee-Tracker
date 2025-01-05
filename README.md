@@ -3,8 +3,8 @@ Employee-Tracker
 
 ## Description
 
-In Business owner scenario be able to view and manage the departments, roles, and employees
-gin a my hypothetical company that results in the organizing and planning of my hypothetical business.
+In a business owner scenario be able to view and manage the departments, roles, and employees
+in a my hypothetical company that results in the organizing and planning of my hypothetical business.
 
 ## Installation
 
