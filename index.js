@@ -376,8 +376,9 @@ function menuActions() {
                                     const roleID = resultID.rows[0].id;
 
                                     //update pool.query 
-                                    pool.query(`UPDATE employee set rol_id = ($1) WHERE role_id = ($2)`,[roleID,employeeID],(err, result) =>
+                                    pool.query(`UPDATE employee set role_id = ($1) WHERE role_id = ($2)`,[roleID,employeeID],(err, result) =>
                                     {
+                                        
                                         if (err) {
                                             if(roleID === employeeID)
                                             console.log(`${employee.employee_firstname} ${employee.employee_lastname} role has not been changed in ${err.table}`);
