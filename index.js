@@ -220,7 +220,7 @@ function menuActions() {
 
 
 
-                
+
 
                 AddEmployeeModule([
 
@@ -258,8 +258,8 @@ function menuActions() {
 
 
 
-                ] 
-                ).then((employee) => { 
+                ]
+                ).then((employee) => {
 
                     pool.query(`SELECT id FROM role where title = ($1)`, [employee.employee_role], (err, resultID) => {
 
@@ -311,10 +311,10 @@ function menuActions() {
                                                 console.log(`${result.rowCount} added to employee database!`);
                                                 menuActions();
                                             }
-                                        });
+                                        }); // end of pool.query inner.
                                     }
 
-                                });
+                                }); //end of pool.query outer inner.
                             }
                         }  //end of else if (resultID)  
 
@@ -332,38 +332,85 @@ function menuActions() {
 
             const UpdateEmployeeRoleModule = inquirer.createPromptModule();
             Promise.all([pool.query('SELECT title FROM role'),
-                pool.query('SELECT CONCAT(first_name,\' \',last_name) AS employee FROM employee')
+            pool.query('SELECT CONCAT(first_name,\' \',last_name) AS employee FROM employee')
+
+            ]).then(([query1, query2]) => {  //query1 and query2 both return objects.
+
+
+
+
+                UpdateEmployeeRoleModule([
+
+                    {
+                        type: 'list',
+                        name: 'employee',
+                        message: 'Which employee do you want to update?',
+                        choices: query2.rows.map((employee) => employee.employee), //creates new array from query2 and returns the values.
+
+                    },
+
+                    {
+                        type: 'list',
+                        name: 'role',
+                        message: 'Which role do you want to assign the selected employee?',
+                        choices: query1.rows.map((role) => role.title),  //creates new array from query1 and returns the values.
+
+                    },]).then((employee) => {
+
+                        pool.query(`SELECT role_id FROM employee where CONCAT(first_name,' ',last_name) = ($1)`, [employee.employee], (err, resultID) => {
+                            
+
+
+                            if (err) {
+                                console.log(err);
+                            }
+                            else if (resultID) {
+
+                                  const employeeID = resultID.rows[0].role_id;
+
+
+
+                                pool.query(`SELECT id FROM role where title = ($1)`, [employee.role], (err, resultID) => {
+
+                                    
+                                    const roleID = resultID.rows[0].id;
+
+                                    //update pool.query 
+                                    pool.query(`UPDATE employee set rol_id = ($1) WHERE role_id = ($2)`,[roleID,employeeID],(err, result) =>
+                                    {
+                                        if (err) {
+                                            if(roleID === employeeID)
+                                            console.log(`${employee.employee_firstname} ${employee.employee_lastname} role has not been changed in ${err.table}`);
+                                            menuActions();
+                                        }
+                                        else if (result) {
+                                            console.log(`Updated ${result.rowCount} role in employee's database!`);
+                                            menuActions();
+                                        }
+
+                                    }); //end of pool.query inner
     
-                ]).then(([query1, query2]) => {  //query1 and query2 both return objects.
-
-                    
-
-
-            UpdateEmployeeRoleModule([
-
-                {
-                    type: 'list',
-                    name: 'employee',
-                    message: 'Which employee do you want to update?',
-                    choices: query2.rows.map((employee) => employee.employee), //creates new array from query2 and returns the values.
-
-                },
-
-                {
-                    type: 'list',
-                    name: 'role',
-                    message: 'Which role do you want to assign the selected employee?',
-                    choices: query1.rows.map((role) => role.title),  //creates new array from query1 and returns the values.
-
-                },]).then((employee) => {
+    
+    
+    
+    
+    
+                                });// end of pool.query outer inner 
+        
 
 
 
 
-                }); //end of UpdateEmployeeRoleModule
+                            }
+                       
+                        }); //end of pool.query outer.
 
 
-        }); //end of Promise.all 
+
+                    }); //end of UpdateEmployeeRoleModule
+
+
+            }); //end of Promise.all 
 
 
 
