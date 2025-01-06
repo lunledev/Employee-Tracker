@@ -14,4 +14,4 @@ along with npm i used to install inquirer, pg packages, and other packages that 
 
 ## Usage
 
-Link to video demonstration: [Employee-Tracker]()
+Link to video demonstration: [Employee-Tracker](https://drive.google.com/file/d/1f65itvTMsC0dkDToYW_JkZzx-aAAi2Hu/view?usp=sharing)
